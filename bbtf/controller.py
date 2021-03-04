@@ -23,14 +23,22 @@ def controller(host1: str, host2: str, host1_test, host2_test, host1_port=18812,
         @wraps(func)
         def wrapper(*args, **kwargs):
             """Connect to first host"""
-            connection1 = rpyc.connect(host1, host1_port, keepalive=True, service=rpyc.core.service.MasterService)
-            connection1._config['sync_request_timeout'] = None  # No timeout
-            logging.info(f'Connected to {host1} on port {host1_port}')
+            try:
+                connection1 = rpyc.connect(host1, host1_port, keepalive=True, service=rpyc.core.service.MasterService)
+                connection1._config['sync_request_timeout'] = None  # No timeout
+                logging.info(f'Connected to {host1} on port {host1_port}')
+            except Exception as e:
+                logging.error(f'Could not connecto to host1: {e}')
+                raise e
 
             """Connect to second host"""
-            connection2 = rpyc.connect(host2, host2_port, keepalive=True, service=rpyc.core.service.MasterService)
-            connection2._config['sync_request_timeout'] = None  # No timeout
-            logging.info(f'Connected to {host2} on port {host2_port}')
+            try:
+                connection2 = rpyc.connect(host2, host2_port, keepalive=True, service=rpyc.core.service.MasterService)
+                connection2._config['sync_request_timeout'] = None  # No timeout
+                logging.info(f'Connected to {host2} on port {host2_port}')
+            except Exception as e:
+                logging.error(f'Could not connect to host2: {e}')
+                raise e
 
             """Teleport test function to first host"""
             host1_test_remote = connection1.teleport(host1_test)
@@ -65,14 +73,22 @@ def async_controller(host1: str, host2: str, host1_test, host2_test, host1_port=
         @wraps(func)
         def wrapper(*args, **kwargs):
             # Connect to first host
-            connection1 = rpyc.connect(host1, host1_port, keepalive=True, service=rpyc.core.service.MasterService)
-            connection1._config['sync_request_timeout'] = None  # No timeout
-            logging.info(f'Connected to {host1} on port {host1_port}')
+            try:
+                connection1 = rpyc.connect(host1, host1_port, keepalive=True, service=rpyc.core.service.MasterService)
+                connection1._config['sync_request_timeout'] = None  # No timeout
+                logging.info(f'Connected to {host1} on port {host1_port}')
+            except Exception as e:
+                logging.error(f'Could not connecto to host1: {e}')
+                raise e
 
-            # Connect to second host
-            connection2 = rpyc.connect(host2, host2_port, keepalive=True, service=rpyc.core.service.MasterService)
-            connection2._config['sync_request_timeout'] = None  # No timeout
-            logging.info(f'Connected to {host2} on port {host2_port}')
+            try:
+                # Connect to second host
+                connection2 = rpyc.connect(host2, host2_port, keepalive=True, service=rpyc.core.service.MasterService)
+                connection2._config['sync_request_timeout'] = None  # No timeout
+                logging.info(f'Connected to {host2} on port {host2_port}')
+            except Exception as e:
+                logging.error(f'Could not connect to to host2: {e}')
+                raise e
 
             # Teleport test function to first host
             host1_test_remote = rpyc.async_(connection1.teleport(host1_test))

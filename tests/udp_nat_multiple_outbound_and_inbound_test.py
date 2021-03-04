@@ -1,7 +1,6 @@
 import logging
 import configparser
 from bbtf.controller import async_controller
-from bbtf.util import write_result
 
 
 config = configparser.ConfigParser()
@@ -74,7 +73,7 @@ def test_server_func(timeout: int, client_ip: str, client_port: int, send_initia
     # Transmit expected timeout to client
     logging.info(f"Send message to client: {addr}")
     sock.sendto(bytes(json.dumps({'expected_timeout': timeout}), 'UTF-8'), (addr[0], addr[1]))
-    # Wati for reply
+    # Wait for reply
     sock.settimeout(2.0)
     try:
         data, addr = sock.recvfrom(1024)
@@ -105,9 +104,9 @@ def start_controller(client_l_remote_func, client_w_remote_func) -> dict:
     def test_step(last_working_timeout, limit_timeout, send_initial):
         timeout = 10
         # init test step
-        addr = client_w_remote_func(timeout, host1, port, send_initial)
+        addr_res = client_w_remote_func(timeout, host1, port, send_initial)
         res = json.loads(client_l_remote_func(host2, timeout, port, send_initial).value)
-        addr = addr.value
+        addr = addr_res.value
         while True:
             if res['received_message']:
                 last_working_timeout = timeout
@@ -124,12 +123,12 @@ def start_controller(client_l_remote_func, client_w_remote_func) -> dict:
             if abs(limit_timeout - last_working_timeout) < 2 or timeout > max_timeout:
                 return last_working_timeout
 
-            addr = client_w_remote_func(timeout, host1, port, addr=(addr[0], addr[1]), send_initial=False)
+            addr_res = client_w_remote_func(timeout, host1, port, addr=(addr[0], addr[1]), send_initial=False)
             res = json.loads(client_l_remote_func(host2, timeout, port, send_initial=False).value)
-            addr = addr.value
+            addr = addr_res.value
 
     res_timeout = test_step(10, max_timeout, True)
-    result_obj = {'test_type': 'UDP', 'test_name': 'Solitary outbound multiple inbound', 'result': res_timeout}
+    result_obj = {'test_type': 'UDP', 'test_name': 'Multiple outbound multiple inbound', 'result': res_timeout}
     logging.info(result_obj)
     return result_obj
 
