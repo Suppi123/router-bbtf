@@ -8,6 +8,8 @@ config.read('config.ini')
 host1 = config['GENERAL']['host1']
 host2 = config['GENERAL']['host2']
 max_timeout = int(config['SOLITARY_OUTBOUND_MULTIPLE_INBOUND']['max_timeout'])
+start_timeout = int(config['SOLITARY_OUTBOUND_MULTIPLE_INBOUND']['start_timeout'])
+timeout_steps = int(config['SOLITARY_OUTBOUND_MULTIPLE_INBOUND']['timeout_steps'])
 
 
 def test_client_func(client_w_ip: str, timeout: int,  udp_port: int, send_initial=False):
@@ -90,7 +92,7 @@ def start_controller(client_l_remote_func, client_w_remote_func) -> dict:
     port = random.randint(49152, 65535)
 
     def test_step(last_working_timeout, limit_timeout, send_initial):
-        timeout = 10
+        timeout = start_timeout
         # init test step
         addr_res = client_w_remote_func(timeout, host1,  port, send_initial=send_initial)
         res = json.loads(client_l_remote_func(host2, timeout, port, send_initial=send_initial).value)
@@ -98,8 +100,8 @@ def start_controller(client_l_remote_func, client_w_remote_func) -> dict:
         while True:
             if res['received_message']:
                 last_working_timeout = timeout
-                if timeout + 15 < limit_timeout:
-                    timeout += 15
+                if timeout + timeout_steps < limit_timeout:
+                    timeout += timeout_steps
                 else:
                     timeout = (limit_timeout + timeout) / 2
             else:
@@ -115,7 +117,7 @@ def start_controller(client_l_remote_func, client_w_remote_func) -> dict:
             res = json.loads(client_l_remote_func(host2, timeout, port, send_initial=False).value)
             addr = addr_res.value
 
-    res_timeout = test_step(10, max_timeout, True)
+    res_timeout = test_step(0, max_timeout, True)
     result_obj = {'test_type': 'UDP', 'test_name': 'Solitary outbound multiple inbound', 'result': res_timeout}
     logging.info(result_obj)
     return result_obj

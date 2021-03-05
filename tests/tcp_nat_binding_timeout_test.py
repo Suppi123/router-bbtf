@@ -8,6 +8,9 @@ host1 = config['GENERAL']['host1']
 host2 = config['GENERAL']['host2']
 
 max_timeout = int(config['TCP_NAT_BINDING_TIMEOUT']['max_timeout'])
+start_timeout = int(config['TCP_NAT_BINDING_TIMEOUT']['start_timeout'])
+timeout_steps = int(config['TCP_NAT_BINDING_TIMEOUT']['timeout_steps'])
+start_port = int(config['TCP_NAT_BINDING_TIMEOUT']['start_port'])
 
 
 def test_client_func(host_w_ip: str, tcp_port: int, timeout: float):
@@ -93,16 +96,16 @@ def start_controller(host_l_remote_func, host_w_remote_func) -> dict:
 
     #  Test
     res = dict()
-    start_port = 2200  # use this port as first test port
+    _start_port = start_port  # use this port as first test port
     last_working_timeout = 0  # this is the last timeout where we got a result. Set to 0 at the beginning
     lowest_not_working_timeout = max_timeout  # this ist the lowest timeout where we got no result
-    timeout = 3600  # the timeout we are about to test
+    timeout = start_timeout  # the timeout we are about to test
     timed_out_once = False  # indicates if we already had a timed out binding
 
     while abs(lowest_not_working_timeout - timeout) > 1 and timeout <= max_timeout:
-        host_w_remote_func(start_port, timeout)
-        result = host_l_remote_func(host2, start_port, timeout)
-        start_port += 1  # use a new port for every test
+        host_w_remote_func(_start_port, timeout)
+        result = host_l_remote_func(host2, _start_port, timeout)
+        _start_port += 1  # use a new port for every test
         #  Result handling
         res = json.loads(result)
         logging.info(res)
@@ -112,7 +115,7 @@ def start_controller(host_l_remote_func, host_w_remote_func) -> dict:
             if timed_out_once:
                 timeout = (timeout + lowest_not_working_timeout) / 2  # binary search
             else:
-                timeout += 3600  # increase the timeout to find the next not working timeout
+                timeout += timeout_steps  # increase the timeout to find the next not working timeout
         else:
             timed_out_once = True
             logging.info(f"Timeout by {res['timeout']} seconds")
