@@ -87,6 +87,7 @@ def start_controller(client_l_remote_func, client_w_remote_func) -> dict:
     """
     # init test
     import json
+    import time
     import random
 
     port = random.randint(49152, 65535)
@@ -95,9 +96,11 @@ def start_controller(client_l_remote_func, client_w_remote_func) -> dict:
         timeout = start_timeout
         # init test step
         addr_res = client_w_remote_func(timeout, host1,  port, send_initial=send_initial)
+        time.sleep(10)
         res = json.loads(client_l_remote_func(host2, timeout, port, send_initial=send_initial).value)
         addr = addr_res.value
         while True:
+            logging.info(f"Got result: {res}")
             if res['received_message']:
                 last_working_timeout = timeout
                 if timeout + timeout_steps < limit_timeout:

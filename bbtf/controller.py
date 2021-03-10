@@ -1,6 +1,5 @@
 import rpyc
 import logging
-import click
 from functools import wraps
 '''
 Logging
@@ -49,10 +48,7 @@ def controller(host1: str, host2: str, host1_test, host2_test, host1_port=18812,
             logging.info(f'Teleported {host2_test.__name__} to {host2}')
 
             # Now we have a nice test setup
-            if isinstance(func, click.Command):
-                logging.info(f'Successfully setup {func.name} on both hosts')
-            else:
-                logging.info(f'Successfully setup {func.__name__} on both hosts')
+            logging.info(f'Successfully setup the test on both hosts')
             return func(host1_test_remote, host2_test_remote, *args, **kwargs)
         return wrapper
     return decorator
@@ -99,10 +95,7 @@ def async_controller(host1: str, host2: str, host1_test, host2_test, host1_port=
             logging.info(f'Teleported {host2_test.__name__} to {host2}')
 
             # Now we have a nice test setup
-            if isinstance(func, click.Command):
-                logging.info(f'Successfully setup {func.name} on both hosts')
-            else:
-                logging.info(f'Successfully setup {func.__name__} on both hosts')
+            logging.info(f'Successfully setup the test on both hosts')
             return func(host1_test_remote, host2_test_remote, *args, **kwargs)
         return wrapper
     return decorator

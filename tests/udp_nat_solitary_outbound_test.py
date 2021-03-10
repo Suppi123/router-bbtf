@@ -10,6 +10,7 @@ host1 = config['GENERAL']['host1']
 host2 = config['GENERAL']['host2']
 output_file = config['GENERAL']['output_file']
 max_timeout = int(config['SOLITARY_OUTBOUND']['max_timeout'])
+start_timeout = int(config['SOLITARY_OUTBOUND']['start_timeout'])
 
 
 def test_client_func(client_w_ip: str, timeout: float, udp_port: int) -> str:
@@ -89,7 +90,7 @@ def start_controller(host_l_remote_func, host_w_remote_func) -> dict:
     start_port = int(config['SOLITARY_OUTBOUND']['start_port'])
     tmp_min_timeout = 0
     tmp_max_timeout = max_timeout
-    timeout = max_timeout / 2
+    timeout = start_timeout
     timed_out_once = False
     while abs(tmp_max_timeout - tmp_min_timeout) > 1 and timeout <= max_timeout:
         host_w_remote_func(timeout, start_port)
