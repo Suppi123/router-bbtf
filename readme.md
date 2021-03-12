@@ -63,6 +63,9 @@ Necessary steps:
     to start all available tests use
     
     `python3 application.py`
+* For full test runs it is recommended to use the `--fulltest` parameter. In the test_groups.ini file, 
+groups of tests can be created to be executed in parallel. It should be noted that the tests of a group should not influence each other. When a group has been completely executed, the tests of the next group start.
+
 
 ## Develop a test
 
