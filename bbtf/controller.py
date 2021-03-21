@@ -30,7 +30,7 @@ def controller(host1: str, host2: str, host1_test, host2_test, host1_port=18812,
                 logging.error(f'Could not connect to host1: {e}')
                 raise e
 
-            # Connect to second host"""
+            # Connect to second host
             try:
                 connection2 = rpyc.connect(host2, host2_port, keepalive=True, service=rpyc.core.service.MasterService)
                 connection2._config['sync_request_timeout'] = None  # No timeout
@@ -77,8 +77,8 @@ def async_controller(host1: str, host2: str, host1_test, host2_test, host1_port=
                 logging.error(f'Could not connect to host1: {e}')
                 raise e
 
+            # Connect to second host
             try:
-                # Connect to second host
                 connection2 = rpyc.connect(host2, host2_port, keepalive=True, service=rpyc.core.service.MasterService)
                 connection2._config['sync_request_timeout'] = None  # No timeout
                 logging.info(f'Connected to {host2} on port {host2_port}')
