@@ -11,7 +11,7 @@ Execute with `sudo python3 simple-test.py`
 ### rpyc_server folder
 
 The rpyc_server folder contains (nearly) everything you need to make a host ready for testing.
-You just need to copy the folder to the host and use either the rpyc_classic.py or the host.py to set up working host.
+You just need to copy the folder to the host and use either the rpyc_classic.py or the host.py to set up a working host.
 The rpyc_classic.py can only run one test at a time but offers logging. The host.py can run multiple
 tests simultaneously but without logging to the console.
 
@@ -40,8 +40,6 @@ If you want to do a speedtest you also have to install iperf3 and an iperf3 pyth
 `pip3 install iperf3`
 
 Necessary steps:
-
-`pip3 install click`
 
 `pip3 install rpyc`
 
